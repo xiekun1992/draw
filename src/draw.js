@@ -1,7 +1,37 @@
 (function(factory) {
 	this.Draw = factory();
 })(function() {
+	function Event(){
+		this.events = {};
+	}
+	Event.prototype.on = function(eventName, cb){
+		if(!this.events[eventName]){
+			this.events[eventName] = [];
+		}
+		this.events[eventName].push(cb);
+	};
+	Event.prototype.trigger = function(eventName, data){
+		var cbs = this.events[eventName];
+		if(cbs){
+			for(var i = 0; i < cbs.length; i++){
+				cbs[i](data);
+			}
+		}
+	};
+	Event.prototype.unbind = function(eventName, cb){
+		var cbs = this.events[eventName];
+		if(cbs){
+			for(var i = cbs.length - 1; i >= 0; i--){
+				if(cbs[i] === cb){
+					cbs.splice(i, 1);
+				}
+			}
+		}
+	};
+
 	function Draw(options) {
+		Event.call(this);
+
 		var defaultOptions = {
 			ratio: 1,
 			width: 400,
@@ -38,47 +68,66 @@
 		this.bindEvent();
 		this.reset();
 	}
+	Draw.prototype = Object.create(Event.prototype);
+
 	Draw.prototype.bindEvent = function() {
+		// 鼠标事件
 		this.element.addEventListener('mousedown', function(e) {
 			if(e.button === 0){ // 左键触发功能
 				callActionByEventType.call(this, 0, e);
-			}
-		}.bind(this));
-		window.addEventListener('mouseup', function(e) {
-			if(e.button === 0){
-				callActionByEventType.call(this, 2, e);
-			}
-		}.bind(this));
-		// 由于外部事件导致失去焦点，如快捷键截图
-		window.addEventListener('blur', function(e) {
-			callActionByEventType.call(this, 2, e);
-		}.bind(this));
-		this.element.addEventListener('mouseup', function(e) {
-			if(e.button === 0){
-				callActionByEventType.call(this, 2, e);
+				this.trigger('mousedown', e);
 			}
 		}.bind(this));
 		this.element.addEventListener('mousemove', function(e) {
 			if(e.button === 0){
 				callActionByEventType.call(this, 1, e);
+				this.trigger('mousemove', e);
+			}
+		}.bind(this));
+		this.element.addEventListener('mouseup', function(e) {
+			if(e.button === 0){
+				callActionByEventType.call(this, 2, e);
+				this.trigger('mouseup', e);
+			}
+		}.bind(this));
+		window.addEventListener('mouseup', function(e) {
+			if(e.button === 0){
+				callActionByEventType.call(this, 2, e);
+				this.trigger('mouseup', e);
 			}
 		}.bind(this));
 
+		// 触屏事件
 		this.element.addEventListener('touchstart', function(e) {
 			callActionByEventType.call(this, 0, e);
-		}.bind(this));
-		window.addEventListener('touchend', function(e) {
-			callActionByEventType.call(this, 2, e);
-		}.bind(this));
-		// 由于外部事件导致失去焦点，如快捷键截图
-		window.addEventListener('touchcancel', function(e) {
-			callActionByEventType.call(this, 2, e);
-		}.bind(this));
-		this.element.addEventListener('touchend', function(e) {
-			callActionByEventType.call(this, 2, e);
+			this.trigger('touchstart', e);
 		}.bind(this));
 		this.element.addEventListener('touchmove', function(e) {
 			callActionByEventType.call(this, 1, e);
+			this.trigger('touchmove', e);
+		}.bind(this));
+		this.element.addEventListener('touchend', function(e) {
+			callActionByEventType.call(this, 2, e);
+			this.trigger('touchend', e);
+		}.bind(this));
+		window.addEventListener('touchend', function(e) {
+			callActionByEventType.call(this, 2, e);
+			this.trigger('touchend', e);
+		}.bind(this));
+
+
+		// 由于外部事件导致失去焦点，如快捷键截图
+		window.addEventListener('blur', function(e) {
+			callActionByEventType.call(this, 2, e);
+			this.trigger('blur', e);
+		}.bind(this));
+		window.addEventListener('touchcancel', function(e) {
+			callActionByEventType.call(this, 2, e);
+			this.trigger('blur', e);
+		}.bind(this));
+		this.element.addEventListener('touchcancel', function(e) {
+			callActionByEventType.call(this, 2, e);
+			this.trigger('blur', e);
 		}.bind(this));
 
 		function callActionByEventType(type, event) {
