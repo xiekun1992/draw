@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>xDraw</title>
+	<style>
+		body{margin: 0;}
+		canvas{border: 1px solid;display: inline-block; float: left;}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	<!-- <div id="display"> -->
+		<canvas width="800" height="800" id="c"></canvas>
+	<!-- </div> -->
+	<button onclick="copy()">copy</button>
+	<script src="../src/draw.js"></script>
+	<script>
+		var lineWidth = 6;
+		var draw = new Draw({
+			container: container,
+			height: 800,
+			width: 800,
+			lineWidth: lineWidth
+		});
+		draw.draw();
+
+		var ctx = c.getContext('2d'), blur = 0.5;
+		// ctx.webkitImageSmoothingEnabled = false;
+		// ctx.scale(lineWidth / (lineWidth + blur * 2), lineWidth / (lineWidth + blur * 2));
+		// ctx.shadowBlur = blur;
+		// ctx.shadowColor = '#000';
+		ctx.translate(0.5, 0.5);
+		var img = new Image();
+		draw.on('mousemove', copy);
+		function copy(){
+			// img.src = draw.export().src; 
+			// img.onload = function(){
+			// 	ctx.drawImage(img, 0, 0, img.width, img.height);
+			// };
+		}
+	</script>
+</body>
+</html>
