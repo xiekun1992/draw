@@ -13,10 +13,10 @@
 	<!-- <div id="display"> -->
 		<canvas width="800" height="800" id="c"></canvas>
 	<!-- </div> -->
-	<button onclick="copy()">copy</button>
+	<!-- <button onclick="copy()">copy</button> -->
 	<script src="../src/draw.js"></script>
 	<script>
-		var lineWidth = 6;
+		var lineWidth = 3;
 		var draw = new Draw({
 			container: container,
 			height: 800,
@@ -25,20 +25,29 @@
 		});
 		draw.draw();
 
-		var ctx = c.getContext('2d'), blur = 0.5;
-		// ctx.webkitImageSmoothingEnabled = false;
+		var ctx = c.getContext('2d'), blur = 2;
+		ctx.webkitImageSmoothingEnabled = false;
 		// ctx.scale(lineWidth / (lineWidth + blur * 2), lineWidth / (lineWidth + blur * 2));
+		// ctx.scale(0.2, 0.2);
 		// ctx.shadowBlur = blur;
 		// ctx.shadowColor = '#000';
-		ctx.translate(0.5, 0.5);
-		var img = new Image();
-		draw.on('mousemove', copy);
-		function copy(){
-			// img.src = draw.export().src; 
-			// img.onload = function(){
-			// 	ctx.drawImage(img, 0, 0, img.width, img.height);
-			// };
+		// ctx.translate(0.5, 0.5);
+		// var img = new Image();
+		for(var i = 0; i < 1920; i+=2){
+			// for(var j = 0; j < ; j++){
+				ctx.moveTo(i, 0);
+				ctx.lineTo(i, 400);
+				ctx.stroke();
+			// }
 		}
+		// draw.on('mouseup', copy);
+		// function copy(){
+		// 	ctx.clearRect(0, 0, c.width, c.height);
+		// 	img.src = draw.export().src; 
+		// 	img.onload = function(){
+		// 		ctx.drawImage(img, 0, 0, img.width, img.height);
+		// 	};
+		// }
 	</script>
 </body>
 </html>

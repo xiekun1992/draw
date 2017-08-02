@@ -193,22 +193,19 @@
 		if (options.lineJoin) {
 			this.ctx.lineJoin = options.lineJoin;
 		}
-		if (options.lineWidth > 0) {
-			this.ctx.lineWidth = options.lineWidth;
-		}
 		/************ 抗锯齿处理 ************/
-		// if (options.lineWidth > 0) {
-		// 	var lineWidth = options.lineWidth,
-		// 		shadowSize = 0;
-		// 	var tmpWidth = lineWidth - shadowSize * 2;
-		// 	if (tmpWidth <= 0) {
-		// 		this.ctx.lineWidth = 1;
-		// 	} else {
-		// 		this.ctx.lineWidth = tmpWidth;
-		// 	}
-		// 	this.ctx.shadowBlur = (lineWidth - this.ctx.lineWidth) / 2;
-		// }
-		// this.ctx.shadowColor = this.ctx.strokeStyle;
+		if (options.lineWidth > 0) {
+			var lineWidth = options.lineWidth,
+				shadowSize = 0.5;
+			var tmpWidth = lineWidth - shadowSize * 2;
+			if (tmpWidth <= 0) {
+				this.ctx.lineWidth = 1;
+			} else {
+				this.ctx.lineWidth = tmpWidth;
+			}
+			this.ctx.shadowBlur = (lineWidth - this.ctx.lineWidth) / 2;
+		}
+		this.ctx.shadowColor = this.ctx.strokeStyle;
 	};
 	Draw.prototype.registAction = function(id, actions) {
 		if (!this.actions[id]) {
@@ -253,31 +250,21 @@
 		}.bind(this);
 	};
 	Draw.prototype.draw = function() {
-		var state = 0, prePosition = {x: 0, y: 0};
+		var state = 0;
 		this.registAction(1, [function(e, positionX, positionY) { // mousedown
 			state = 1;
 			this.ctx.lineCap = 'round';
-			// this.ctx.beginPath();
+			this.ctx.beginPath();
 			this.ctx.moveTo(positionX, positionY);
 			this.ctx.lineTo(positionX, positionY);
-			prePosition.x = positionX;
-			prePosition.y = positionY;
 			this.ctx.stroke();
 		}, function(e, positionX, positionY) { // mousemove
 			if (state == 1) {
-				this.ctx.beginPath();
-				// ctx.moveTo(20,20);
-				/************ 贝塞尔曲线抗锯齿处理 ************/
-				this.ctx.moveTo(prePosition.x, prePosition.y);
-				// this.ctx.lineTo(positionX, positionY);
-				this.ctx.quadraticCurveTo((prePosition.x + positionX) / 2, (prePosition.y + positionY) / 2, positionX, positionY);
-				prePosition.x = positionX;
-				prePosition.y = positionY;
+				this.ctx.lineTo(positionX, positionY);
 				this.ctx.stroke();
-				this.ctx.closePath();
 			}
 		}, function(e) { // mouseup
-			// this.ctx.closePath();
+			this.ctx.closePath();
 			state = 0;
 		}]);
 	};
