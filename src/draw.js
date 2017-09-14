@@ -117,10 +117,6 @@
 
 
 		// 由于外部事件导致失去焦点，如快捷键截图
-		this.element.addEventListener('mouseout', function(e) {
-			callActionByEventType.call(this, 2, e);
-			this.trigger('blur', e);
-		}.bind(this));
 		window.addEventListener('blur', function(e) {
 			callActionByEventType.call(this, 2, e);
 			this.trigger('blur', e);
@@ -244,8 +240,11 @@
 		img.src = imgFile.src;
 		var width = this.element.width,
 			height = width / this.options.ratio;
+		var shadowBlur = this.ctx.shadowBlur;
+		this.ctx.shadowBlur = 0;
 		img.onload = function() {
 			this.ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+			this.ctx.shadowBlur = shadowBlur;
 			// this.ctx.lineWidth = this.options.width / imgFile.width * imgFile.lineWidth;// this.ctx.lineWidth / this.options.ratio;
 		}.bind(this);
 	};
